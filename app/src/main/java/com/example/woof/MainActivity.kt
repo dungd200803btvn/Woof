@@ -9,19 +9,17 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,38 +61,45 @@ fun WoofApp() {
         }
     }
 }
-
-
-
-
-/**
- * Composable that displays a list item containing a dog icon and their information.
- *
- * @param dog contains the data that populates the list item
- * @param modifier modifiers to set to this composable
- */
 @Composable
 fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
+    val expanded by remember {
+        mutableStateOf(false)
+    }
     Card(modifier = modifier.padding(8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+        Column() {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
 
-        ) {
-            DogIcon(dog.imageResourceId)
-            DogInformation(dog.name, dog.age)
+            ) {
+                DogIcon(dog.imageResourceId)
+                DogInformation(dog.name, dog.age)
+                Spacer(modifier = Modifier.weight(1f))
+                DogItemButton(expanded = expanded, onClick = {  })
+            }
+            DogHobby(dogHobby = dog.hobbies)
         }
+        
     }
 
 }
+@Composable
+private fun DogItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+  IconButton(onClick = onClick) {
+      Icon(imageVector = Icons.Filled.ExpandMore,
+      tint = MaterialTheme.colors.secondary,
+      contentDescription = stringResource(id = R.string.expand_button_content_description))
 
-/**
- * Composable that displays a photo of a dog.
- *
- * @param dogIcon is the resource ID for the image of the dog
- * @param modifier modifiers to set to this composable
- */
+  }
+}
+
+
 @Composable
 fun DogIcon(@DrawableRes dogIcon: Int, modifier: Modifier = Modifier) {
     Image(
@@ -112,13 +117,6 @@ fun DogIcon(@DrawableRes dogIcon: Int, modifier: Modifier = Modifier) {
     )
 }
 
-/**
- * Composable that displays a dog's name and age.
- *
- * @param dogName is the resource ID for the string of the dog's name
- * @param dogAge is the Int that represents the dog's age
- * @param modifier modifiers to set to this composable
- */
 @Composable
 fun DogInformation(@StringRes dogName: Int, dogAge: Int, modifier: Modifier = Modifier) {
     Column {
@@ -141,12 +139,31 @@ fun WoofAppTopBar(modifier: Modifier =Modifier){
         .background(color = MaterialTheme.colors.primary),
     verticalAlignment = Alignment.CenterVertically){
         Image(painter = painterResource(id =R.drawable.ic_woof_logo ), contentDescription = null,
-        modifier = Modifier.size(64.dp).padding(8.dp))
+        modifier = Modifier
+            .size(64.dp)
+            .padding(8.dp))
       Text(text = stringResource(id = R.string.app_name),
           style =  MaterialTheme.typography.h1
       )
       }
     }
+@Composable
+fun DogHobby(@StringRes dogHobby:Int,
+modifier:Modifier=Modifier){
+    Column(modifier = modifier.padding(start = 16.dp,
+        top = 8.dp,
+        bottom = 16.dp,
+        end = 16.dp)) {
+        Text(
+            text = stringResource(R.string.about),
+            style = MaterialTheme.typography.h3,
+        )
+        Text(
+            text = stringResource(dogHobby),
+            style = MaterialTheme.typography.body1,
+        )
+    }
+}
 
 
 @Preview
